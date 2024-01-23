@@ -3,6 +3,8 @@ package com.example.wallettesttask.controller;
 import com.example.wallettesttask.dto.WalletDto;
 import com.example.wallettesttask.entity.Wallet;
 import com.example.wallettesttask.exception.WalletDoesNotExist;
+import com.example.wallettesttask.exception.WalletNotEnoughMoney;
+import com.example.wallettesttask.exception.WalletNotTrue;
 import com.example.wallettesttask.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -21,17 +23,17 @@ public class WalletController {
             Wallet wallet = walletService.getAccount(WALLET_UUID);
             return ResponseEntity.ok().body(wallet);
         } catch (WalletDoesNotExist e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
 
     @PostMapping("/wallets")
     public ResponseEntity<String> changeAccount(@RequestBody WalletDto walletDto) {
-        walletService.changeAccount(walletDto);
         try {
+            walletService.changeAccount(walletDto);
             return ResponseEntity.ok().body("OK");
-        } catch (WalletDoesNotExist e) {
+        } catch (WalletDoesNotExist | WalletNotEnoughMoney | WalletNotTrue e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

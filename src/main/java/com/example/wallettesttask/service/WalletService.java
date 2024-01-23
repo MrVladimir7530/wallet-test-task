@@ -4,6 +4,8 @@ import com.example.wallettesttask.dto.OperationType;
 import com.example.wallettesttask.dto.WalletDto;
 import com.example.wallettesttask.entity.Wallet;
 import com.example.wallettesttask.exception.WalletDoesNotExist;
+import com.example.wallettesttask.exception.WalletNotEnoughMoney;
+import com.example.wallettesttask.exception.WalletNotTrue;
 import com.example.wallettesttask.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,8 @@ public class WalletService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Wallet getAccount(Long uuid) {
-        return walletRepository.findById(uuid).orElseThrow(()-> new WalletDoesNotExist("Данный кошелек не существует"));
+        return walletRepository.findById(uuid)
+                .orElseThrow(()-> new WalletDoesNotExist("Данный кошелек не существует"));
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -27,11 +30,16 @@ public class WalletService {
             walletRepository.changeSum(walletDto.getAmount(), walletDto.getUuid());
             return;
         }
-        if (operationType == OperationType.WITHDRAW) {
+        else if (operationType == OperationType.WITHDRAW) {
+            Wallet wallet = getAccount(walletDto.getUuid());
+            int result = wallet.getAccount().compareTo(walletDto.getAmount());
+            if (result == -1) {
+                throw new WalletNotEnoughMoney("Недостаточно денег");
+            }
              walletRepository.changeDif(walletDto.getAmount(), walletDto.getUuid());
              return;
         }
-        throw new RuntimeException();
+        throw new WalletNotTrue("Неверная отправка JSON");
     }
 
 }
