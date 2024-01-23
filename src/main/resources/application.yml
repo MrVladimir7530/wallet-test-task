@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/wallet_test_task
+    username: AccountTest
+    password: 1234567890
+  liquibase:
+    change-log: liquibase/changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
