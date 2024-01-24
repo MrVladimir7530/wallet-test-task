@@ -1,5 +1,6 @@
 package com.example.wallettesttask.service;
 
+import com.example.wallettesttask.dto.NewWalletDto;
 import com.example.wallettesttask.dto.OperationType;
 import com.example.wallettesttask.dto.WalletDto;
 import com.example.wallettesttask.entity.Wallet;
@@ -42,4 +43,17 @@ public class WalletService {
         throw new WalletNotTrue("Неверная отправка JSON");
     }
 
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Wallet add(NewWalletDto newWalletDto) {
+        Wallet wallet = new Wallet();
+        wallet.setAccount(newWalletDto.getAccount());
+        wallet.setUuid(newWalletDto.getUuid());
+
+        return walletRepository.save(wallet);
+    }
+
+    public void remove(Long uuid) {
+        walletRepository.deleteById(uuid);
+    }
 }

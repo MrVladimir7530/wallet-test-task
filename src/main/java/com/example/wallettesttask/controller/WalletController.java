@@ -1,5 +1,6 @@
 package com.example.wallettesttask.controller;
 
+import com.example.wallettesttask.dto.NewWalletDto;
 import com.example.wallettesttask.dto.WalletDto;
 import com.example.wallettesttask.entity.Wallet;
 import com.example.wallettesttask.exception.WalletDoesNotExist;
@@ -37,4 +38,17 @@ public class WalletController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/wallet")
+    public ResponseEntity<Wallet> addWallet(@RequestBody NewWalletDto newWalletDto) {
+        Wallet wallet = walletService.add(newWalletDto);
+        return ResponseEntity.ok(wallet);
+    }
+
+    @DeleteMapping("wallet/{uuid}")
+    public ResponseEntity<Void> removeWallet(@PathVariable Long uuid) {
+        walletService.remove(uuid);
+        return ResponseEntity.ok().build();
+    }
+
 }
