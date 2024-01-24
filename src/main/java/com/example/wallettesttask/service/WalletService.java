@@ -53,6 +53,7 @@ public class WalletService {
         return walletRepository.save(wallet);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void remove(Long uuid) {
         walletRepository.deleteById(uuid);
     }
